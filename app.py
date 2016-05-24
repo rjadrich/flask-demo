@@ -45,6 +45,8 @@ def index():
     header_text = "Stock data for %s" % app.vars['ticker']
     return render_template('graph_ticker.html', script=script, div=div, header_text=header_text)
 
+#bob
+
 
 if __name__ == '__main__':
   app.run(port=33507)
