@@ -5,6 +5,7 @@ from bokeh.palettes import Spectral6
 import requests
 import pandas as pd
 import datetime
+import sys
 import logging
 
 app = Flask(__name__)
