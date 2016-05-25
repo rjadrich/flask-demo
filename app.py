@@ -5,22 +5,26 @@ from bokeh.palettes import Spectral6
 import requests
 import pandas as pd
 import datetime
+import logging
 
 app = Flask(__name__)
+
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 app.vars={}
 
 @app.route('/')
 def main():
-  return redirect('/ticker_input')
+    return redirect('/ticker_input')
 
 @app.route('/ticker_input', methods=['GET','POST'])
 def index():
-  if request.method == 'GET':
-    return render_template('ticker_input.html')
-  else:
-    app.vars['ticker'] = request.form['ticker']
-    app.vars['ticker_options'] = request.form.getlist('ticker_options')
+    if request.method == 'GET':
+        return render_template('ticker_input.html')
+    else:
+        app.vars['ticker'] = request.form['ticker']
+        app.vars['ticker_options'] = request.form.getlist('ticker_options')
 
     #get the data
     api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json' % app.vars['ticker']
@@ -46,4 +50,5 @@ def index():
     return render_template('graph_ticker.html', script=script, div=div, header_text=header_text)
 
 if __name__ == '__main__':
-  app.run(port=33507)
+    app.debug = True
+    app.run(port=33507)
