@@ -1,4 +1,4 @@
 nomkl
-bokeh
+bokeh==0.9.0
 numpy
 pandas
