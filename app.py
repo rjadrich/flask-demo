@@ -44,8 +44,8 @@ def index():
     plot = figure(tools=TOOLS, title='Data from Quandle WIKI set', x_axis_label='date', x_axis_type='datetime')
     iteration = 0
     for entry in app.vars['ticker_options']:
-        plot.line(stock_df['Date_dt'], stock_df[entry], color=Spectral6[iteration], legend=entry)
-        iteration = iteration + 1
+        plot.line(stock_df['Date_dt'], stock_df[entry], line_width=4, color=Spectral6[iteration], legend=entry)
+        iteration = iteration + 2
     script, div = components(plot)
     header_text = "Stock data for %s" % app.vars['ticker']
     return render_template('graph_ticker.html', script=script, div=div, header_text=header_text)
