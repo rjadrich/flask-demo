@@ -22,7 +22,7 @@ def main():
 @app.route('/ticker_input', methods=['GET','POST'])
 def index():
     if request.method == 'GET':
-        return render_template('ticker_input.html')
+        return render_template('ticker_input.html', message="Please enter a stock ticker eg. GOOG, and check desired features.")
     else:
         app.vars['ticker'] = request.form['ticker']
         app.vars['ticker_options'] = request.form.getlist('ticker_options')
@@ -33,6 +33,12 @@ def index():
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
     raw_data = session.get(api_url)
     aapl_stock = raw_data.json()
+    
+    #error check
+    if "error" in aapl_stock.keys():
+        return render_template('ticker_input.html', message="Stock %s does not exist. Try again." % app.vars['ticker'].upper())
+    if  len(app.vars['ticker_options']) == 0:
+        return render_template('ticker_input.html', message="No choices selected for %s. Try again." % app.vars['ticker'].upper())
 
     #make a datetime dataset
     stock_df = pd.DataFrame(data = aapl_stock["data"], columns = aapl_stock["column_names"])[['Date','Open','Adj. Open','Close','Adj. Close']]
@@ -44,10 +50,11 @@ def index():
     plot = figure(tools=TOOLS, title='Data from Quandle WIKI set', x_axis_label='date', x_axis_type='datetime')
     iteration = 0
     for entry in app.vars['ticker_options']:
-        plot.line(stock_df['Date_dt'], stock_df[entry], line_width=4, color=Spectral6[iteration], legend=entry)
-        iteration = iteration + 2
+        plot.line(stock_df['Date_dt'], stock_df[entry], line_width=3, color=Spectral6[iteration], legend=entry)
+        iteration = iteration + 1
     script, div = components(plot)
-    header_text = "Stock data for %s" % app.vars['ticker']
+    header_text = "Stock data for %s" % app.vars['ticker'].upper()
+    
     return render_template('graph_ticker.html', script=script, div=div, header_text=header_text)
 
 if __name__ == '__main__':
